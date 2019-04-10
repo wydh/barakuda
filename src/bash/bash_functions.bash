@@ -43,7 +43,7 @@ function barakuda_init()
     export l_y2_j=false    ; # if 1-year long NEMO files end sometime in year+1 instead of year!
     
     # Supported ORCA grids:
-    export ORCA_LIST="ORCA025.L75 ORCA1.L75 ORCA1.L46 ORCA1.L42 ORCA2.L31"
+    export ORCA_LIST="ORCA025.L75 ORCA1.L75 ORCA1.L46 ORCA1.L42 ORCA2.L31 NANUK025"
 
     # Some defaults:
     export LFORCE_YINI=false

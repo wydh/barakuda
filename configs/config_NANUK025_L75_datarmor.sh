@@ -22,18 +22,19 @@ export EXTRA_CONF="OPA (NEMO 3.6) -- OASIS -- neXtSIM" ;   #  // same here ...
 
 # Path / directory structure in which to find NEMO output file (you can use
 # <ORCA> and <EXP> as substitute to your ORCA grid and experiment (EXP) name):
-export NEMO_OUT_STRCT="/proj/bolinc/users/x_laubr/run/<EXP>/output/nemo"
+export NEMO_OUT_STRCT="/home3/datawork/lbrodeau/<ORCA>/<ORCA>-<EXP>-S/opa/00000001-00035040"
 
 # Path to root directory where to save the diagnostics (diagnostics for this "CONF"):
-export DIAG_DIR="/proj/bolinc/users/x_laubr/barakuda/ece32"
+export DIAG_DIR="/home3/scratch/lbrodeau/barakuda"
 
 # Path to directory containing some 2D and 3D climatologies on the relevant ORCA grid:
-export CONF_INI_DIR="/proj/bolinc/users/x_laubr/input_barakuda/ORCA025.L75_barakuda"
+export CONF_INI_DIR="/home3/datawork/lbrodeau/NANUK025/NANUK025-I/barakuda"
 
 # Temporary file system (scratch) on which to perform the job you can use <JOB_ID> if scracth depends on JOB ID:
-export SCRATCH="/scratch/local/<JOB_ID>"
+#export SCRATCH="/scratch/local/<JOB_ID>"
+export SCRATCH="/home3/scratch/lbrodeau/tmp"
 
-export PYTHON_HOME="/home/x_laubr/opt/Canopy_64bit/User" ; # HOME to python distribution with matplotlib and basemap !
+export PYTHON_HOME="/appli/anaconda/2.7/envs/intel-python" ; # HOME to python distribution with matplotlib and basemap !
 
 export DIR_NCVIEW_CMAP="${BARAKUDA_ROOT}/src/ncview_colormaps"
 
@@ -124,8 +125,8 @@ export NN_WNDM="windsp"      ; # name of surface wind  speed module in "FILE_FLX
 ################################################################################################
 
 # Land-sea mask and basins files:
-export MM_FILE=${CONF_INI_DIR}/mesh_mask_ORCA025.L75_ece3.2_2017.nc4
-export BM_FILE=${BARAKUDA_ROOT}/data/basin_mask_ORCA025_ece3.2_2017.nc4
+export MM_FILE=${CONF_INI_DIR}/mesh_mask_NANUK025_3.6.nc
+export BM_FILE=${MM_FILE}
 
 # OBSERVATIONS / REFERENCES
 # 3D monthly climatologies of potential temperature and salinity (can be those you used for the NEMO experiment):
@@ -139,7 +140,7 @@ export NN_SST_OBS="thetao"
 #
 # Sea-ice:
 export NM_IC_OBS="Hurrell et al 2008 [1980-1999]"
-export F_ICE_OBS_12=${CONF_INI_DIR}/ice_cover_180x360-ORCA025_Hurrell_monthly_mean1980-1999.nc4
+export F_ICE_OBS_12=${CONF_INI_DIR}/ice_cover_180x360-CREG025_Hurrell_monthly_mean1980-1999.nc
 export NN_ICEF_OBS="ice_cover"
 #
 # Surface Heat fluxes:
@@ -174,36 +175,36 @@ export RWWWD=/data/www/barakuda/ec-earth_3.2b ; # directory of the local or remo
 #########################
 
 # Movies of SST and SSS compared to OBS:
-export i_do_movi=1
+export i_do_movi=0
 export iffmpeg_x264=0 ; # is, by chance, ffmpeg with support for x264 encoding available on your stystem? => 1 !
 
 # Basic 3D and surface averages:
-export i_do_mean=1
+export i_do_mean=0
 
 # IFS surface fluxes of heat and freshwater
 export i_do_ifs_flx=0 ; # only relevant when ece_exp=2...
 
 # AMOC:
-export i_do_amoc=1
+export i_do_amoc=0
 export LMOCLAT="20-23 30-33 40-43 45-48 50-53" ; # List of latitude bands to look in for max of AMOC
 
 # Sea-ice diags
 export i_do_ice=1  ; # Sea-ice diags
 
 # Transport of mass, heat and salt through specified sections (into TRANSPORT_SECTION_FILE):
-export i_do_trsp=1  ; # transport of mass, heat and salt through specified sections
+export i_do_trsp=0  ; # transport of mass, heat and salt through specified sections
 #              # i_do_trsp=2 => treat also different depths range!
 z1_trsp=100  ; # first  depth: i_do_trsp must be set to 2
 z2_trsp=1000 ; # second depth: i_do_trsp must be set to 2
 
 # Solid freshwater transport through sections due to sea-ice drift
-export i_do_trsp_ice=1 ; # must have i_do_ice=1
+export i_do_trsp_ice=0 ; # must have i_do_ice=1
 
 # Meridional heat/salt transport (advective)
-export i_do_mht=1
+export i_do_mht=0
 
 # Transport by sigma class
-export i_do_sigt=1
+export i_do_sigt=0
 
 # Budget on pre-defined (FILE_DEF_BOXES) rectangular domains:
 export i_do_bb=0   ; # Budget and other stuffs on a given rectangular box!
@@ -221,7 +222,7 @@ export MLD_CRIT="1000,725,500"
 
 # User-defined meridional or zonal cross sections (for temperature and salinity)
 # => TS_SECTION_FILE must be defined!
-export i_do_sect=1
+export i_do_sect=0
 export TS_SECTION_FILE="${BARAKUDA_ROOT}/data/TS_sections.dat"
 
 
