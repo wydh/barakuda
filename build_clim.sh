@@ -131,33 +131,33 @@ C2EU="nav_lon,nav_lat,depthu"
 C2EV="nav_lon,nav_lat,depthv"
 C2EW="nav_lon,nav_lat,depthw"
 
-GRID_IMP="grid_T"
+GRIDIMP="gridT"
 if [ ${ivt} -eq 1 ] || [ ${ibpsi} -eq 1 ] || [ ${icurl} -eq 1 ]; then
-    GRID_IMP+=" grid_U"
+    GRIDIMP+=" gridU"
 fi
 if [ ${iamoc} -eq 1 ] || [ ${ivt} -eq 1 ] || [ ${ibpsi} -eq 1 ] || [ ${icurl} -eq 1 ]; then
-    GRID_IMP+=" grid_V"
+    GRIDIMP+=" gridV"
 fi
 if [ `contains_string ${FILE_ICE_SUFFIX} ${NEMO_SAVED_FILES}` -eq 1 ]; then
-    GRID_IMP+=" ${FILE_ICE_SUFFIX}"
+    GRIDIMP+=" ${FILE_ICE_SUFFIX}"
 fi
 if [ `contains_string SBC ${NEMO_SAVED_FILES}` -eq 1 ]; then
-    GRID_IMP+=" SBC"
+    GRIDIMP+=" ${FILE_FLX_SUFFIX}"
 fi
-echo; echo " GRID_IMP = ${GRID_IMP}"; echo
+echo; echo " GRIDIMP = ${GRIDIMP}"; echo
 
 
 # Checking what files we have / plan to use:
 if [ -z "${NEMO_SAVED_FILES}" ]; then
-    echo "Please specify which NEMO files are saved (file suffixes, grid_T, ..., icemod) ?"
+    echo "Please specify which NEMO files are saved (file suffixes, gridT, ..., icemod) ?"
     echo " => set the variable NEMO_SAVED_FILES in your config_${CONFIG}.sh file!"; exit
 fi
-VAF=( "grid_T" "grid_U" "grid_V" "icemod" "SBC" )
+VAF=( "gridT" "gridU" "gridV" "${FILE_ICE_SUFFIX}" "${FILE_FLX_SUFFIX}" )
 js=0 ; gimp_new=""
 for sf in ${VAF[*]}; do
     echo "Checking ${sf}..."
     ca=`echo "${NEMO_SAVED_FILES} ${NEMO_SAVED_FILES_3D}" | grep ${sf}`
-    cb=`echo "${GRID_IMP}"         | grep ${sf}`
+    cb=`echo "${GRIDIMP}"         | grep ${sf}`
     if [ "${ca}" = "" ]; then
         if [ "${cb}" != "" ]; then
             echo "PROBLEM! The diags you specified say you need ${sf} files"
@@ -168,8 +168,8 @@ for sf in ${VAF[*]}; do
     fi
     ((js++))
 done
-GRID_IMP=${gimp_new}
-echo; echo "File types to import: ${GRID_IMP}"; echo; echo
+GRIDIMP=${gimp_new}
+echo; echo "File types to import: ${GRIDIMP}"; echo; echo
 
 
 VCM=( "01" "02" "03" "04" "05" "06" "07" "08" "09" "10" "11" "12" )
@@ -221,15 +221,15 @@ while [ ${jyear} -le ${Y2} ]; do
     barakuda_import_files
 
     # Monthly files to work with for current year:
-    ft1m=${CRT1M}_grid_T.nc
-    fu1m=${CRT1M}_grid_U.nc
-    fv1m=${CRT1M}_grid_V.nc
+    ft1m=${CRT1M}_gridT.nc
+    fu1m=${CRT1M}_gridU.nc
+    fv1m=${CRT1M}_gridV.nc
     # Annual files to work with for current year:
     CRT1Y=`echo ${CRT1M} | sed -e s/"_${TSTAMP}_"/"_${ANNUAL_3D}_"/g`
-    ft1y=${CRT1Y}_grid_T.nc
-    fu1y=${CRT1Y}_grid_U.nc
-    fv1y=${CRT1Y}_grid_V.nc
-    fj1y=${CRT1Y}_${FILE_ICE_SUFFIX}.nc ; # can be icemod or grid_T ....
+    ft1y=${CRT1Y}_gridT.nc
+    fu1y=${CRT1Y}_gridU.nc
+    fv1y=${CRT1Y}_gridV.nc
+    fj1y=${CRT1Y}_${FILE_ICE_SUFFIX}.nc ; # can be icemod or gridT ....
     CFG3D=${CRT1M}
     CPREF3D=${CPRMN}
     #
@@ -238,7 +238,7 @@ while [ ${jyear} -le ${Y2} ]; do
     fu3d=${fu1m}
     fv3d=${fv1m}
     if [ "${ANNUAL_3D}" = "1y" ]; then
-        [[ ${NEMO_SAVED_FILES_3D} =~ (^|[[:space:]])"grid_U"($|[[:space:]]) ]] \
+        [[ ${NEMO_SAVED_FILES_3D} =~ (^|[[:space:]])"gridU"($|[[:space:]]) ]] \
             && CPREF3D=${CPRAN}; CFG3D=${CRT1Y}; ft3d=${ft1y}; fu3d=${fu1y}; fv3d=${fv1y} \
             || echo "...default"
         echo ""

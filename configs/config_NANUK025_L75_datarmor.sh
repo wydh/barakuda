@@ -57,7 +57,7 @@ export TRES_IFS=511  ;    # spectral resolution for IFS, ex: T255 => TRES_IFS=25
 export ATMO_INFO="IFS T${TRES_IFS}" ; # Name of atmospheric model or forcing used (ex: COREv2, DFS5.2, IFS T255, ect...)
 
 # List of suffix of files that have been saved by NEMO and contain MONTHLY averages:
-export NEMO_SAVED_FILES="grid_T grid_U grid_V icemod SBC"
+export NEMO_SAVED_FILES="gridT gridU gridV icemod flxT"
 
 export TSTAMP="1m"   ; # output time-frequency stamp as in NEMO output files...
 
@@ -68,7 +68,7 @@ export NEMO_SAVED_FILES_3D="" ; #     ''
 # How does the nemo files prefix looks like
 # Everything before "<year_related_info>_grid_<X>" or "<year_related_info>_icemod"
 # use <ORCA>, <EXP> and <TSTAMP>=>  Ex: export NEMO_FILE_PREFIX="<ORCA>-<EXP>_<TSTAMP>_"
-export NEMO_FILE_PREFIX="<EXP>_<TSTAMP>_"
+export NEMO_FILE_PREFIX="<ORCA>-<EXP>_<TSTAMP>_"
 # => should get rid of TSTAMP actually...
 
 
@@ -103,7 +103,7 @@ export NN_ICEU="sivelu" ; # ice U-velocity
 export NN_ICEV="sivelv" ; # ice V-velocity
 #
 # Surface fluxes:
-export FILE_FLX_SUFFIX="SBC" ; # in what file type extension to find surface fluxes (normally: "SBC")
+export FILE_FLX_SUFFIX="flxT" ; # in what file type extension to find surface fluxes (normally: "SBC")
 ####                           # => mind that $FILE_FLX_SUFFIX must be also in NEMO_SAVED_FILES (above)
 #### Note: in fields marked with *+/-* you can use a sum or substraction of variables (no space allowed!)
 ####       ex: NN_EMP="evap_ao_cea+subl_ai_cea-precip"
