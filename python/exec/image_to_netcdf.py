@@ -116,7 +116,7 @@ if lcolor:
     id_blue[:,:]  = nmp.flipud(xpic[:,:,2])
 
 else:
-    id_bw  = f_out.createVariable('bw','f4',(cdim_y,cdim_x,))
+    id_bw  = f_out.createVariable('bw','i1',(cdim_y,cdim_x,))
     id_bw.long_name = 'Grey scale'
     id_bw[:,:]   = nmp.flipud(xpic[:,:]) / idiv
 
