@@ -12,8 +12,8 @@ import os
 from netCDF4 import Dataset
 import datetime
 
-l_fake_coor = True
-#l_fake_coor = False
+#l_fake_coor = True
+l_fake_coor = False
 
 
 
@@ -36,8 +36,7 @@ cfname, cfext = os.path.splitext(cf_im)
 cf_nc = string.replace(os.path.basename(cf_im), cfext, '.nc')
 
 # Opening Images:
-print ' *** Opening image '+cf_nc
-
+print ' *** Opening image '+cf_im
 pic = Image.open(cf_im)
 
 
@@ -84,8 +83,8 @@ f_out = Dataset(cf_nc, 'w', format='NETCDF4')
 
 # Dimensions:
 
-cdim_x = 'x'
-cdim_y = 'y'
+cdim_x = 'longitude'
+cdim_y = 'latitude'
 #if l_fake_coor:
 #    cdim_x = 'lon'
 #    cdim_y = 'lat'

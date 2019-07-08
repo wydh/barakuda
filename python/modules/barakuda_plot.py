@@ -1509,7 +1509,7 @@ class plot :
         [t.set_color('0.3') for t in ax2.xaxis.get_ticklabels()]
         plt.xlabel('Wave-number [cy/km]', color='0.3')
         #
-        if cinfo != '': ax2.annotate(cinfo, xy=(0.08, 0.08), xycoords='axes fraction',  bbox={'facecolor':clr_inf_box, 'alpha':1., 'pad':10}, zorder=100, **font_inf)
+        if cinfo != '': ax2.annotate(cinfo, xy=(0.08, 0.24), xycoords='axes fraction',  bbox={'facecolor':clr_inf_box, 'alpha':1., 'pad':10}, zorder=100, **font_inf)
         #
         if logo_on:
             fon = { 'fontname':'Arial', 'fontweight':'normal', 'fontsize':10 }
