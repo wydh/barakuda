@@ -113,7 +113,7 @@ for jt in range(Nt):
     
     # Building q2
     # ~~~~~~~~~~~
-    xq2 = bthermo.qa_e_p(bthermo.e_sat(xd2), xp0)               
+    xq2 = bthermo.q_air_dp(xd2, xp0)               
     
     # Creating output file
     # ~~~~~~~~~~~~~~~~~~~~
