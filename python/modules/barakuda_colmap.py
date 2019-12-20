@@ -11,7 +11,7 @@ import numpy as nmp
 
 # List of Barakuda home-made colormaps:
 list_barakuda = [ 'blk', 'land', 'land_dark', 'terre', 'cb1', 'eke', 'bathy', 'mld', 'tap1', 'tap2', 'jetblanc', 'amoc',
-                  'sst1', 'sst2', 'sst3', 'ice', 'blanc', 'rms',
+                  'sst1', 'sst2', 'sst3', 'ice', 'ice_on', 'blanc', 'rms',
                   'sigtr', 'bbr', 'bbr2', 'bbr0', 'bbr_cold', 'bbr_warm',
                   'cold0', 'warm0', 'graylb', 'graylb2', 'sigma', 'sigma0', 'mask', 'on0', 'on1', 'on2', 'on3' ]
 
@@ -19,21 +19,21 @@ list_barakuda = [ 'blk', 'land', 'land_dark', 'terre', 'cb1', 'eke', 'bathy', 'm
 
 l_debug = False
 
-def chose_colmap( cname, log_ctrl=0 ):
+def chose_colmap( cname, log_ctrl=0, exp_ctrl=0 ):
 
     # 1st is it a ncview colormap ?
     if cname[:7] == 'ncview_':
         M = ncview_cmap_to_array( cname )
-        ColorMap = __build_colormap__(M, log_ctrl=log_ctrl)
+        ColorMap = __build_colormap__(M, log_ctrl=log_ctrl, exp_ctrl=exp_ctrl)
 
         # Maybe a barakuda colormap ?
     elif cname in list_barakuda or ( cname[-2:] == '_r' and cname[:-2] in list_barakuda):
         if l_debug: print '\n *** Getting Barakuda colormap "'+cname+'" !'
         x = brkd_cmap(cname)
-        ColorMap = x.clrmp(log_ctrl=log_ctrl)
+        ColorMap = x.clrmp(log_ctrl=log_ctrl, exp_ctrl=exp_ctrl)
     else:
         # Then it must be a Matplotlib colormap:
-        if log_ctrl > 0: print 'WARNING: cannot use LOG colormap with Matplotlib colormaps...'
+        if log_ctrl or exp_ctrl > 0: print 'WARNING: cannot use LOG or EXP colormap with Matplotlib colormaps...'
         from matplotlib.pylab import cm
         import matplotlib.pyplot as mp
         list = mp.colormaps()
@@ -123,7 +123,7 @@ def ncview_cmap_to_array( cname ):
 # ===== local ======
 
 
-def __build_colormap__(MC, log_ctrl=0):
+def __build_colormap__(MC, log_ctrl=0, exp_ctrl=0):
 
     import matplotlib.colors as mplc
 
@@ -134,6 +134,7 @@ def __build_colormap__(MC, log_ctrl=0):
     for i in range(nc): x.append(255.*float(i)/((nc-1)*255.0))
     x = nmp.array(x)
     if log_ctrl > 0: x = nmp.log(x + log_ctrl)
+    if exp_ctrl > 0: x = nmp.exp(x * exp_ctrl)
     rr = x[nc-1] ; x  = x/rr
 
     y =nmp.zeros(nc)
@@ -165,7 +166,7 @@ class brkd_cmap:
     def __init__(self, name):
         self.name = name
 
-    def clrmp(self, log_ctrl=0):
+    def clrmp(self, log_ctrl=0, exp_ctrl=0):
 
         cname = self.name
 
@@ -356,6 +357,13 @@ class brkd_cmap:
                 [ 1.0 , 1.0 , 1.0 ]  # white
             ] )
 
+        elif cname == 'ice_on':
+            M = nmp.array( [
+                [ 0.,0.,0. ],        # noir   (has to match with coldest color of "on3" !
+                [ 25./255. , 102./255. , 114./255. ],
+                [ 1.0 , 1.0 , 1.0 ]  # white
+            ] )
+            #                [ 0.6 , 0.6 , 0.8 ], # light grey
         elif cname == 'blanc':
             M = nmp.array( [
                 [ 1.0 , 1.0 , 1.0 ],  # white
@@ -505,9 +513,9 @@ class brkd_cmap:
 
         if lrev:
             # reverse colormap:
-            my_cmap = __build_colormap__(M[::-1,:], log_ctrl=log_ctrl)
+            my_cmap = __build_colormap__(M[::-1,:], log_ctrl=log_ctrl, exp_ctrl=exp_ctrl)
         else:
-            my_cmap = __build_colormap__(M, log_ctrl=log_ctrl)
+            my_cmap = __build_colormap__(M, log_ctrl=log_ctrl, exp_ctrl=exp_ctrl)
 
         return my_cmap
 
