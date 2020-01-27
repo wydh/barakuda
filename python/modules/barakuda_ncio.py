@@ -447,7 +447,7 @@ def write_2d_mask(cf_out, MSK, xlon=[], xlat=[], name='mask'):
 
     return
 
-def dump_2d_field(cf_out, XFLD, xlon=[], xlat=[], name='field'):
+def dump_2d_field( cf_out, XFLD, xlon=[], xlat=[], name='field', unit='', long_name='', mask=[] ):
 
     (nj,ni) = nmp.shape(XFLD)
 
@@ -465,6 +465,13 @@ def dump_2d_field(cf_out, XFLD, xlon=[], xlat=[], name='field'):
             id_lat[:,:] = xlat[:,:]
         
     id_fld  = f_out.createVariable(name ,'f4',('y','x',), zlib=True, complevel=5)
+    if long_name != '': id_fld.long_name = long_name
+    if unit      != '': id_fld.units     = unit
+
+    if mask != []:
+        idx_land = nmp.where( mask < 0.5)
+        XFLD[idx_land] = nmp.nan
+    
     id_fld[:,:] = XFLD[:,:]
 
     f_out.about = 'Diagnostics created with BaraKuda (https://github.com/brodeau/barakuda)'
