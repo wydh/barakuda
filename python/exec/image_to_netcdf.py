@@ -128,7 +128,8 @@ else:
     if l_nemo_like:
         id_bw  = f_out.createVariable('bw','i1',('t',cdim_y,cdim_x,))
         id_bw.long_name = 'Grey scale'
-        id_bw[0,:,:]   = nmp.flipud(xpic[:,:]) / idiv
+        #id_bw[0,:,:]   = nmp.flipud(xpic[:,:]) / idiv
+        id_bw[0,:,:]   = 1 - (nmp.flipud(xpic[:,:]) + 1)/idiv
     else:
         id_bw  = f_out.createVariable('bw','i1',(cdim_y,cdim_x,))
         id_bw.long_name = 'Grey scale'
