@@ -99,7 +99,7 @@ if l_nemo_like:
 f_out.createDimension(cdim_x, nx)
 f_out.createDimension(cdim_y, ny)
 
-if l_nemo_like: f_out.createDimension('t', None)
+#if l_nemo_like: f_out.createDimension('t', None)
 
 if l_fake_coor:
     id_lon  = f_out.createVariable('lon0','f4',(cdim_x,))
@@ -125,15 +125,15 @@ if lcolor:
     id_blue[:,:]  = nmp.flipud(xpic[:,:,2])
 
 else:
-    if l_nemo_like:
-        id_bw  = f_out.createVariable('bw','i1',('t',cdim_y,cdim_x,))
-        id_bw.long_name = 'Grey scale'
-        #id_bw[0,:,:]   = nmp.flipud(xpic[:,:]) / idiv
-        id_bw[0,:,:]   = 1 - (nmp.flipud(xpic[:,:]) + 1)/idiv
-    else:
-        id_bw  = f_out.createVariable('bw','i1',(cdim_y,cdim_x,))
-        id_bw.long_name = 'Grey scale'
-        id_bw[:,:]   = nmp.flipud(xpic[:,:]) / idiv
+    #if l_nemo_like:
+    #    id_bw  = f_out.createVariable('bw','i1',('t',cdim_y,cdim_x,))
+    #    id_bw.long_name = 'Grey scale'
+    #    #id_bw[0,:,:]   = nmp.flipud(xpic[:,:]) / idiv
+    #    id_bw[0,:,:]   = 1 - (nmp.flipud(xpic[:,:]) + 1)/idiv
+    #else:
+    id_bw  = f_out.createVariable('bw','i1',(cdim_y,cdim_x,))
+    id_bw.long_name = 'Grey scale'
+    id_bw[:,:]   = 1 - (nmp.flipud(xpic[:,:]) + 1)/idiv
 
 
 f_out.About  = 'Image '+cf_im+' converted to netcdf.'
