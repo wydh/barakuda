@@ -13,7 +13,7 @@ from netCDF4 import Dataset
 l_fake_coor = True
 #l_fake_coor = False
 
-
+l_nemo_like = False
 
 narg = len(sys.argv)
 if narg not in [3]:
@@ -39,41 +39,74 @@ print ' *** Will create mask '+cf_msk
 # Reading data array:
 f_nc = Dataset(cf_nc)
 Ndim = len(f_nc.variables[cv_nc].dimensions)
+rfill_val = f_nc.variables[cv_nc]._FillValue
+print ' *** rfill_val =',rfill_val
+#
 if   Ndim == 4:
-    xfield = imult*f_nc.variables[cv_nc][0,:,:,:]
+    xfield = f_nc.variables[cv_nc][0,:,:,:]
 elif Ndim == 3:
-    xfield = imult*f_nc.variables[cv_nc][:,:,:]
+    xfield = f_nc.variables[cv_nc][:,:,:]
     #elif Ndim == 2:
-    #    xfield = imult*f_nc.variables[cv_nc][:,:]
+    #    xfield = f_nc.variables[cv_nc][:,:]
 else:
     print ' ERROR (mk_zonal_average.py) => weird shape for your mask array!'
     sys.exit(0)
-#xfield  = imult*f_nc.variables[cv_nc][:,:]
+#xfield  = f_nc.variables[cv_nc][:,:]
 f_nc.close()
 
 
 
-(ny,nx) = nmp.shape(xfield)
+(nz,ny,nx) = nmp.shape(xfield)
 
-ifield = nmp.zeros((ny,nx), dtype=nmp.int16)
+print xfield[0,:,:]
 
-xfield[:,:] = nmp.round(xfield[:,:], 0)
-
-ifield = xfield.astype(nmp.int16)
-
-# Cleaning overshoots:
-idx_too_small = nmp.where(ifield < 0)
-ifield[idx_too_small] = 0
-idx_too_large = nmp.where(ifield > 255)
-ifield[idx_too_large] = 255
-
-#print ifield[:,22]
-
-ifield8 = ifield.astype(nmp.uint8)
+print("nx, ny, nz =",nx,ny,nz)
 
 
-image = Image.fromarray(nmp.flipud(ifield8))
+mask = nmp.zeros((nz,ny,nx))
 
-# Then save it:
-image.save(cf_msk)
-print ' *** Image '+cf_msk+' saved!\n'
+if rfill_val > 0:
+    idd = nmp.where( xfield < rfill_val )
+else:
+    idd = nmp.where( xfield > rfill_val )
+mask[idd]=1
+
+
+
+f_out = Dataset(cf_msk, 'w', format='NETCDF4')
+
+# Dimensions:
+cdim_x = 'longitude'
+cdim_y = 'latitude'
+cdim_z = 'depth'
+if l_nemo_like:
+    cdim_x = 'x'
+    cdim_y = 'y'
+    cdim_z = 'z'
+
+f_out.createDimension(cdim_x, nx)
+f_out.createDimension(cdim_y, ny)
+f_out.createDimension(cdim_z, nz)
+
+
+#if l_fake_coor:
+#    id_lon  = f_out.createVariable('lon0','f4',(cdim_x,))
+#    id_lat  = f_out.createVariable('lat0','f4',(cdim_y,))
+#    id_lon[:] = vlon[:]
+#    id_lat[:] = vlat[:]
+
+
+
+id_msk  = f_out.createVariable('mask','i1',(cdim_z,cdim_y,cdim_x,))
+id_msk.long_name = 'Land-Sea mask'
+id_msk[:,:,:]   = mask[:,:,:]
+
+
+f_out.About  = 'Variable '+cv_nc+' converted to a mask...'
+f_out.Author = 'Generated with image_to_netcdf.py of BARAKUDA (https://github.com/brodeau/barakuda)'
+
+f_out.close()
+
+
+
+print cf_msk+' created!!!'
