@@ -15,19 +15,25 @@ l_fake_coor = True
 
 l_nemo_like = False
 
+l_use_fillval = True
+
 narg = len(sys.argv)
-if narg not in [3]:
-    print 'Usage: '+sys.argv[0]+' <netcdf_file.nc> <3D netcdf_variable>'; sys.exit(0)
+if narg not in [3,4]:
+    print 'Usage: '+sys.argv[0]+' <netcdf_file.nc> <2D or 3D netCDF field> (<value>)'
+    print '  => if no <value> is specified: the "_FillValue" attribute is used!\n'
+    sys.exit(0)
 
 cf_nc = sys.argv[1]
 cv_nc = sys.argv[2]
-#ciext = sys.argv[3]
 
+if narg == 4:
+    l_use_fillval = False
+    rfill_val = float(sys.argv[3])
     
 cfname, cncext = os.path.splitext(cf_nc)
 
 
-cf_msk = string.replace(os.path.basename(cf_nc), cv_nc, 'mask')
+cf_msk = 'lsm_'+string.replace(os.path.basename(cf_nc), cv_nc, 'mask')
 
 print ' *** Will create mask '+cf_msk
 
@@ -38,16 +44,40 @@ print ' *** Will create mask '+cf_msk
 
 # Reading data array:
 f_nc = Dataset(cf_nc)
-Ndim = len(f_nc.variables[cv_nc].dimensions)
-rfill_val = f_nc.variables[cv_nc]._FillValue
-print ' *** rfill_val =',rfill_val
+ndim = len(f_nc.variables[cv_nc].dimensions)
 #
-if   Ndim == 4:
-    xfield = f_nc.variables[cv_nc][0,:,:,:]
-elif Ndim == 3:
-    xfield = f_nc.variables[cv_nc][:,:,:]
-    #elif Ndim == 2:
-    #    xfield = f_nc.variables[cv_nc][:,:]
+if l_use_fillval:
+    rfill_val = f_nc.variables[cv_nc]._FillValue
+#
+print '\n *** Field value to use to generate mask: rfill_val =',rfill_val,'\n'
+#
+# Looking at the dimmensions of the variable:
+list_dim_var = f_nc.dimensions.keys()
+print 'list_dim_var = ', list_dim_var
+# Check if one is unlimited:
+inu = 0
+for cd in list_dim_var:
+    if f_nc.dimensions[cd].isunlimited(): inu = inu + 1
+if inu > 1:
+    print 'PROBLEM: there are more than one UNLIMITED dimension in the file!'
+    sys.exit(0)
+
+NbDim = 3
+#
+if   ndim == 4:
+        xfield = f_nc.variables[cv_nc][0,:,:,:] # 3D !       BAD!
+elif ndim == 3:
+    if inu==1:
+        xfield = f_nc.variables[cv_nc][0,:,:] ; # 2D !
+        NbDim = 2
+    else:
+        xfield = f_nc.variables[cv_nc][:,:,:] ; # 3D !       
+elif ndim == 2:
+        if inu==0:
+            xfield = f_nc.variables[cv_nc][:,:]
+            NbDim = 2
+        else:
+            print 'PROBLEM: your field does not seem to be 3D!'
 else:
     print ' ERROR (mk_zonal_average.py) => weird shape for your mask array!'
     sys.exit(0)
@@ -55,15 +85,17 @@ else:
 f_nc.close()
 
 
+nz = -1
+if NbDim==3:
+    (nz,ny,nx) = nmp.shape(xfield)
+    print("nx, ny, nz =",nx,ny,nz)
+    mask = nmp.zeros((nz,ny,nx))
+else:
+    (ny,nx) = nmp.shape(xfield)
+    print("nx, ny =",nx,ny)
+    mask = nmp.zeros((ny,nx))
 
-(nz,ny,nx) = nmp.shape(xfield)
 
-print xfield[0,:,:]
-
-print("nx, ny, nz =",nx,ny,nz)
-
-
-mask = nmp.zeros((nz,ny,nx))
 
 if rfill_val > 0:
     idd = nmp.where( xfield < rfill_val )
@@ -86,7 +118,7 @@ if l_nemo_like:
 
 f_out.createDimension(cdim_x, nx)
 f_out.createDimension(cdim_y, ny)
-f_out.createDimension(cdim_z, nz)
+if NbDim==3: f_out.createDimension(cdim_z, nz)
 
 
 #if l_fake_coor:
@@ -96,10 +128,14 @@ f_out.createDimension(cdim_z, nz)
 #    id_lat[:] = vlat[:]
 
 
+if NbDim==3:
+    id_msk  = f_out.createVariable('mask','i1',(cdim_z,cdim_y,cdim_x,))
+    id_msk[:,:,:]   = mask[:,:,:]
+else:
+    id_msk  = f_out.createVariable('mask','i1',(cdim_y,cdim_x,))
+    id_msk[:,:]   = mask[:,:]
 
-id_msk  = f_out.createVariable('mask','i1',(cdim_z,cdim_y,cdim_x,))
 id_msk.long_name = 'Land-Sea mask'
-id_msk[:,:,:]   = mask[:,:,:]
 
 
 f_out.About  = 'Variable '+cv_nc+' converted to a mask...'
