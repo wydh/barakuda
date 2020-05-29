@@ -10,10 +10,8 @@ import string
 import os
 from netCDF4 import Dataset
 
-l_fake_coor = True
+#l_fake_coor = True
 #l_fake_coor = False
-
-l_nemo_like = False
 
 l_use_fillval = True
 
@@ -33,7 +31,9 @@ if narg == 4:
 cfname, cncext = os.path.splitext(cf_nc)
 
 
-cf_msk = 'lsm_'+string.replace(os.path.basename(cf_nc), cv_nc, 'mask')
+#cf_msk = 'lsm_'+string.replace(os.path.basename(cf_nc), cv_nc, 'mask')
+
+cf_msk = 'mask.nc'
 
 print ' *** Will create mask '+cf_msk
 
@@ -114,13 +114,9 @@ mask[idd]=1
 f_out = Dataset(cf_msk, 'w', format='NETCDF4')
 
 # Dimensions:
-cdim_x = 'longitude'
-cdim_y = 'latitude'
-cdim_z = 'depth'
-if l_nemo_like:
-    cdim_x = 'x'
-    cdim_y = 'y'
-    cdim_z = 'z'
+cdim_x = 'x'
+cdim_y = 'y'
+cdim_z = 'z'
 
 f_out.createDimension(cdim_x, nx)
 f_out.createDimension(cdim_y, ny)
