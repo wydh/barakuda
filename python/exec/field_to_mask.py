@@ -47,8 +47,14 @@ f_nc = Dataset(cf_nc)
 ndim = len(f_nc.variables[cv_nc].dimensions)
 #
 if l_use_fillval:
-    rfill_val = f_nc.variables[cv_nc]._FillValue
-#
+    list_att_var = f_nc.variables[cv_nc].ncattrs()
+    if '_FillValue' in list_att_var:
+        rfill_val = f_nc.variables[cv_nc]._FillValue
+    elif 'missing_value' in list_att_var:
+        rfill_val = f_nc.variables[cv_nc].missing_value
+    else:
+        print 'ERROR: found neither "_FillValue" nor "missing_value" attribute for variable '+cv_nc+' !'; sys.exit(0)
+        #
 print '\n *** Field value to use to generate mask: rfill_val =',rfill_val,'\n'
 #
 # Looking at the dimmensions of the variable:
