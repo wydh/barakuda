@@ -102,11 +102,15 @@ else:
     mask = nmp.zeros((ny,nx))
 
 
-
-if rfill_val > 0:
-    idd = nmp.where( xfield < rfill_val )
+if l_use_fillval:
+    if rfill_val > 0:
+        idd = nmp.where( xfield < rfill_val )
+    else:
+        idd = nmp.where( xfield > rfill_val )
+    #
 else:
-    idd = nmp.where( xfield > rfill_val )
+    idd = nmp.where( xfield != rfill_val )
+        
 mask[idd]=1
 
 
