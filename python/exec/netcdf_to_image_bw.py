@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #       B a r a K u d a
 #
@@ -7,7 +7,7 @@
 import sys
 import numpy as nmp
 from PIL import Image
-import string
+#import string
 import os
 from netCDF4 import Dataset
 
@@ -18,7 +18,7 @@ l_fake_coor = True
 
 narg = len(sys.argv)
 if narg not in [4, 5]:
-    print 'Usage: '+sys.argv[0]+' <netcdf_file.nc> <netcdf_variable> <image_extension (jpg,png,bmp,...)> (mutiple to field)'; sys.exit(0)
+    print('Usage: '+sys.argv[0]+' <netcdf_file.nc> <netcdf_variable> <image_extension (jpg,png,bmp,...)> (mutiple to field)'); sys.exit(0)
 
 cf_nc = sys.argv[1]
 cv_nc = sys.argv[2]
@@ -28,14 +28,14 @@ imult = 1
 if narg == 5: imult = int(sys.argv[4])
 
 
-print imult
+print(imult)
     
 cfname, cncext = os.path.splitext(cf_nc)
 
 
-cf_im = string.replace(os.path.basename(cf_nc), cncext, '.'+ciext)
+cf_im = str.replace(os.path.basename(cf_nc), cncext, '.'+ciext)
 
-print ' *** Will create image '+cf_im
+print(' *** Will create image '+cf_im)
 
 
 
@@ -52,7 +52,7 @@ elif Ndim == 3:
 elif Ndim == 2:
     xfield = imult*f_nc.variables[cv_nc][:,:]
 else:
-    print ' ERROR (mk_zonal_average.py) => weird shape for your mask array!'
+    print(' ERROR (mk_zonal_average.py) => weird shape for your mask array!')
     sys.exit(0)
 #xfield  = imult*f_nc.variables[cv_nc][:,:]
 f_nc.close()
@@ -73,7 +73,7 @@ ifield[idx_too_small] = 0
 idx_too_large = nmp.where(ifield > 255)
 ifield[idx_too_large] = 255
 
-#print ifield[:,22]
+#print(ifield[:,22])
 
 ifield8 = ifield.astype(nmp.uint8)
 
@@ -82,4 +82,4 @@ image = Image.fromarray(nmp.flipud(ifield8))
 
 # Then save it:
 image.save(cf_im)
-print ' *** Image '+cf_im+' saved!\n'
+print(' *** Image '+cf_im+' saved!\n')

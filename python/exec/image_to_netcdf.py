@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #       B a r a K u d a
 #
@@ -7,7 +7,6 @@
 import sys
 import numpy as nmp
 from PIL import Image
-import string
 import os
 from netCDF4 import Dataset
 import datetime
@@ -19,24 +18,24 @@ l_nemo_like = True
 
 narg = len(sys.argv)
 if not narg in [2, 3]:
-    print 'Usage: '+sys.argv[0]+' <image> (<field divider for field>)'; sys.exit(0)
+    print('Usage: '+sys.argv[0]+' <image> (<field divider for field>)'); sys.exit(0)
 
 cf_im = sys.argv[1]
 
 idiv = 1
 if narg == 3: idiv = int(sys.argv[2])
 
-print idiv
+print(idiv)
 
 cfname, cfext = os.path.splitext(cf_im)
 
 
 #(nj,ni) = nmp.shape(nav_lon)
 
-cf_nc = string.replace(os.path.basename(cf_im), cfext, '.nc')
+cf_nc = str.replace(os.path.basename(cf_im), cfext, '.nc')
 
 # Opening Images:
-print ' *** Opening image '+cf_im
+print(' *** Opening image '+cf_im)
 pic = Image.open(cf_im)
 
 
@@ -48,22 +47,22 @@ vshape_pic = nmp.shape(pic)
 
 if len(vshape_pic) == 3:
     (ny,nx,nrgb) = vshape_pic
-    if nrgb != 3: print ' Problem #1 with your image, not what we expected!' ; sys.exit(0)
+    if nrgb != 3: print(' Problem #1 with your image, not what we expected!') ; sys.exit(0)
     lcolor = True    ;  # RGB color picture => 3 2D array
-    print "\n It's a RGB color picture!\n"
+    print("\n It's a RGB color picture!\n")
     
 elif len(vshape_pic) == 2:
     lcolor = False   ;  # grey-scale picture (true black and white) => 1 2D array
     (ny,nx) = vshape_pic
     nrgb = 1
-    print "\n It's a grey-scale B&W picture!\n"
+    print("\n It's a grey-scale B&W picture!\n")
 else:
-    print ' Problem #2 with your image, not what we expected!' ; sys.exit(0)
+    print(' Problem #2 with your image, not what we expected!') ; sys.exit(0)
 
 
 
 
-print " *** shape of pic: ", (ny,nx)
+print(" *** shape of pic: ", (ny,nx))
 
 xpic = nmp.array(pic)
 
@@ -75,7 +74,7 @@ if l_fake_coor:
     
     vlat = nmp.zeros(ny) ; dy = 180./float(ny)
     for jj in range(ny): vlat[jj] = -90 + (float(jj) + 0.5)*dy
-    #print vlat[:]
+    #print(vlat[:])
     #sys.exit(0)
 
 
@@ -143,5 +142,5 @@ f_out.close()
 
 
 
-print cf_nc+' created!!!'
+print(cf_nc+' created!!!')
 
