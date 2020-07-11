@@ -27,8 +27,8 @@ elif iconv == 2:
     cv_d2='d2m'
     cv_p0='msl'
     cv_q2='q2m'
-    cv_lon = 'longitude'
-    cv_lat = 'latitude'
+    cv_lon = 'lon'
+    cv_lat = 'lat'
 
     
 if len(sys.argv) != 2:
@@ -126,10 +126,10 @@ for jt in range(Nt):
         f_out.createDimension('time', None)
     
         # Variables
-        id_lon = f_out.createVariable(cv_lon,'f4',(cv_lon,),              zlib=True)
-        id_lat = f_out.createVariable(cv_lat,'f4',(cv_lat,),              zlib=True)
-        id_tim = f_out.createVariable('time','f4',('time',)               zlib=True)
-        id_q2  = f_out.createVariable(cv_q2, 'f4',('time',cv_lat,cv_lon,) zlib=True)
+        id_lon = f_out.createVariable(cv_lon,'f4',(cv_lon,),               zlib=True)
+        id_lat = f_out.createVariable(cv_lat,'f4',(cv_lat,),               zlib=True)
+        id_tim = f_out.createVariable('time','f4',('time',),               zlib=True)
+        id_q2  = f_out.createVariable(cv_q2, 'f4',('time',cv_lat,cv_lon,), zlib=True)
     
         # Attributes
         id_tim.units = cunt_time
