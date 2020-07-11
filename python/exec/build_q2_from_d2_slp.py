@@ -121,8 +121,8 @@ for jt in range(Nt):
         f_out = Dataset(cf_q2, 'w', format='NETCDF4')
     
         # Dimensions:
-        f_out.createDimension(cv_lon, ni)
-        f_out.createDimension(cv_lat, nj)
+        f_out.createDimension('x',    ni)
+        f_out.createDimension('y',    nj)
         f_out.createDimension('time', None)
     
         # Variables
